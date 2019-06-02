@@ -1,0 +1,70 @@
+data "aws_caller_identity" "current" {
+}
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+}
+
+resource "aws_cloudtrail" "trail" {
+  name                       = "cloudtrail-all"
+  s3_bucket_name             = var.cloudtrail_bucket
+  enable_logging             = "true"
+  is_multi_region_trail      = "true"
+  enable_log_file_validation = "true"
+  kms_key_id                 = var.kms_key_id
+  cloud_watch_logs_role_arn  = aws_iam_role.cloudtrail_cloudwatch_events_role.arn
+  cloud_watch_logs_group_arn = aws_cloudwatch_log_group.cwl_loggroup.arn
+}
+
+resource "aws_iam_role" "cloudtrail_cloudwatch_events_role" {
+  name_prefix        = "cloudtrail_events_role"
+  assume_role_policy = data.aws_iam_policy_document.cwl_assume_policy.json
+}
+
+resource "aws_iam_role_policy" "cwl_policy" {
+  name_prefix = "cloudtrail_cloudwatch_events_policy"
+  role        = aws_iam_role.cloudtrail_cloudwatch_events_role.id
+  policy      = data.aws_iam_policy_document.cwl_policy.json
+}
+
+data "aws_iam_policy_document" "cwl_assume_policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudtrail.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "cwl_policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["logs:CreateLogStream"]
+
+    resources = [
+      "arn:aws:logs:${var.region}:${local.account_id}:log-group:${aws_cloudwatch_log_group.cwl_loggroup.name}:log-stream:*",
+    ]
+  }
+
+  statement {
+    effect  = "Allow"
+    actions = ["logs:PutLogEvents"]
+
+    resources = [
+      "arn:aws:logs:${var.region}:${local.account_id}:log-group:${aws_cloudwatch_log_group.cwl_loggroup.name}:log-stream:*",
+    ]
+  }
+}
+
+resource "aws_cloudwatch_log_group" "cwl_loggroup" {
+  name = "cloudtrail2cwl"
+}
+
+resource "aws_cloudwatch_log_stream" "cwl_stream" {
+  name           = local.account_id
+  log_group_name = aws_cloudwatch_log_group.cwl_loggroup.name
+}
+
