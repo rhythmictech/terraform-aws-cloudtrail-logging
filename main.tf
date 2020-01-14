@@ -6,14 +6,14 @@ locals {
 }
 
 resource "aws_cloudtrail" "trail" {
-  name                       = "cloudtrail-all"
-  s3_bucket_name             = var.cloudtrail_bucket
-  enable_logging             = "true"
-  is_multi_region_trail      = "true"
-  enable_log_file_validation = "true"
-  kms_key_id                 = var.kms_key_id
   cloud_watch_logs_role_arn  = aws_iam_role.cloudtrail_cloudwatch_events_role.arn
   cloud_watch_logs_group_arn = aws_cloudwatch_log_group.cwl_loggroup.arn
+  enable_log_file_validation = "true"
+  enable_logging             = "true"
+  is_multi_region_trail      = "true"
+  kms_key_id                 = var.kms_key_id
+  name                       = "cloudtrail-all"
+  s3_bucket_name             = var.cloudtrail_bucket
 }
 
 resource "aws_iam_role" "cloudtrail_cloudwatch_events_role" {
@@ -67,4 +67,3 @@ resource "aws_cloudwatch_log_stream" "cwl_stream" {
   name           = local.account_id
   log_group_name = aws_cloudwatch_log_group.cwl_loggroup.name
 }
-
