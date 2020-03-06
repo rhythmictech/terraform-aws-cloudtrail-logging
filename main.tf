@@ -12,7 +12,7 @@ resource "aws_cloudtrail" "trail" {
   enable_logging             = "true"
   is_multi_region_trail      = "true"
   kms_key_id                 = var.kms_key_id
-  name                       = "cloudtrail-all"
+  name                       = var.cloudtrail_name
   s3_bucket_name             = var.cloudtrail_bucket
 }
 
@@ -60,7 +60,9 @@ data "aws_iam_policy_document" "cwl_policy" {
 }
 
 resource "aws_cloudwatch_log_group" "cwl_loggroup" {
-  name = "cloudtrail2cwl"
+  name              = var.log_group_name
+  kms_key_id        = var.kms_key_id
+  retention_in_days = var.retention_in_days == -1 ? null : var.retention_in_days
 }
 
 resource "aws_cloudwatch_log_stream" "cwl_stream" {
