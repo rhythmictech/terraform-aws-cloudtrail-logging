@@ -1,8 +1,12 @@
 data "aws_caller_identity" "current" {
 }
 
+data "aws_partition" "current" {
+}
+
 locals {
   account_id = data.aws_caller_identity.current.account_id
+  partition  = data.aws_partition.current.partition
 }
 
 resource "aws_cloudtrail" "trail" {
@@ -18,6 +22,7 @@ resource "aws_cloudtrail" "trail" {
 
 resource "aws_iam_role" "cloudtrail_cloudwatch_events_role" {
   name_prefix        = "cloudtrail_events_role"
+  path               = var.iam_path
   assume_role_policy = data.aws_iam_policy_document.cwl_assume_policy.json
 }
 
@@ -45,7 +50,7 @@ data "aws_iam_policy_document" "cwl_policy" {
     actions = ["logs:CreateLogStream"]
 
     resources = [
-      "arn:aws:logs:${var.region}:${local.account_id}:log-group:${aws_cloudwatch_log_group.cwl_loggroup.name}:log-stream:*",
+      "arn:${local.partition}:logs:${var.region}:${local.account_id}:log-group:${aws_cloudwatch_log_group.cwl_loggroup.name}:log-stream:*",
     ]
   }
 
@@ -54,7 +59,7 @@ data "aws_iam_policy_document" "cwl_policy" {
     actions = ["logs:PutLogEvents"]
 
     resources = [
-      "arn:aws:logs:${var.region}:${local.account_id}:log-group:${aws_cloudwatch_log_group.cwl_loggroup.name}:log-stream:*",
+      "arn:${local.partition}:logs:${var.region}:${local.account_id}:log-group:${aws_cloudwatch_log_group.cwl_loggroup.name}:log-stream:*",
     ]
   }
 }

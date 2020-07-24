@@ -24,6 +24,7 @@ module "cloudtrail-logging" {
 |------|-------------|:----:|:-----:|:-----:|
 | cloudtrail\_bucket | Name of bucket for CloudTrail logs | string | n/a | yes |
 | cloudtrail\_name | Name for the CloudTrail | string | `"cloudtrail-all"` | no |
+| iam\_path | Path for the iam role | string | `/` | no |
 | kms\_key\_id | KMS key ARN to use for encrypting CloudTrail logs | string | n/a | yes |
 | log\_group\_name | Name for CloudTrail log group | string | `"cloudtrail2cwl"` | no |
 | region | Region that CloudWatch logging and the S3 bucket will live in | string | n/a | yes |
