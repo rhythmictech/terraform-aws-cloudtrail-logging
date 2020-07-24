@@ -9,6 +9,12 @@ variable "cloudtrail_name" {
   type        = string
 }
 
+variable "iam_path" {
+  default     = "/"
+  description = "Path under which to put the IAM role. Should begin and end with a '/'."
+  type        = string
+}
+
 variable "kms_key_id" {
   description = "KMS key ARN to use for encrypting CloudTrail logs"
   type        = string
