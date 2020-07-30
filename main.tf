@@ -18,12 +18,14 @@ resource "aws_cloudtrail" "trail" {
   kms_key_id                 = var.kms_key_id
   name                       = var.cloudtrail_name
   s3_bucket_name             = var.cloudtrail_bucket
+  tags                       = var.tags
 }
 
 resource "aws_iam_role" "cloudtrail_cloudwatch_events_role" {
   name_prefix        = "cloudtrail_events_role"
   path               = var.iam_path
   assume_role_policy = data.aws_iam_policy_document.cwl_assume_policy.json
+  tags               = var.tags
 }
 
 resource "aws_iam_role_policy" "cwl_policy" {
@@ -68,9 +70,11 @@ resource "aws_cloudwatch_log_group" "cwl_loggroup" {
   name              = var.log_group_name
   kms_key_id        = var.kms_key_id
   retention_in_days = var.retention_in_days == -1 ? null : var.retention_in_days
+  tags              = var.tags
 }
 
 resource "aws_cloudwatch_log_stream" "cwl_stream" {
   name           = local.account_id
   log_group_name = aws_cloudwatch_log_group.cwl_loggroup.name
 }
+

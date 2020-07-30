@@ -36,3 +36,9 @@ variable "retention_in_days" {
   description = "How long should CloudTrail logs be retained in CloudWatch (does not affect S3 storage). Set to -1 for indefinite storage."
   type        = number
 }
+
+variable "tags" {
+  default     = {}
+  description = "Mapping of any extra tags you want added to resources"
+  type        = map(string)
+}
