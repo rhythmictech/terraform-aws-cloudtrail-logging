@@ -43,6 +43,12 @@ variable "retention_in_days" {
   type        = number
 }
 
+variable "tags" {
+  default     = {}
+  description = "Mapping of any extra tags you want added to resources"
+  type        = map(string)
+}
+
 variable "s3_object_level_buckets" {
   default     = [ ]
   description = "ARNs of buckets for which to enable object level logging. Specify `[\"arn:aws:s3:::\"]` for all, or `[ ]` for none. If listing ARNs, make sure to end each one with a `/`."
