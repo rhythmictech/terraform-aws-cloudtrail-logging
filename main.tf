@@ -7,6 +7,10 @@ data "aws_partition" "current" {
 locals {
   account_id = data.aws_caller_identity.current.account_id
   partition  = data.aws_partition.current.partition
+
+  # Need a list to work with for_each, but don't actually want to for_each
+  log_s3     = length(var.s3_object_level_buckets) > 0 ? [ true ] : [ ]
+  log_lambda = length(var.lambda_functions)        > 0 ? [ true ] : [ ]
 }
 
 resource "aws_cloudtrail" "trail" {
@@ -19,6 +23,28 @@ resource "aws_cloudtrail" "trail" {
   name                       = var.cloudtrail_name
   s3_bucket_name             = var.cloudtrail_bucket
   tags                       = var.tags
+  
+  # S3 object logging:
+  event_selector{
+    read_write_type           = "All"
+    include_management_events = true
+
+    dynamic "data_resource" {
+      for_each = local.log_s3
+      content {
+        type   = "AWS::S3::Object"
+        values = var.s3_object_level_buckets
+      }
+    }
+
+    dynamic "data_resource" {
+      for_each = local.log_lambda
+      content {
+        type   = "AWS::Lambda::Function"
+        values = var.lambda_functions
+      }
+    }
+  }
 }
 
 resource "aws_iam_role" "cloudtrail_cloudwatch_events_role" {
