@@ -18,19 +18,32 @@ module "cloudtrail-logging" {
 ```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.12.20 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| aws | n/a |
+
 ## Inputs
 
-| Name                | Description                                                                                                                 |    Type     |      Default       | Required |
-|---------------------|-----------------------------------------------------------------------------------------------------------------------------|:-----------:|:------------------:|:--------:|
-| cloudtrail\_bucket  | Name of bucket for CloudTrail logs                                                                                          |   string    |        n/a         |   yes    |
-| cloudtrail\_name    | Name for the CloudTrail                                                                                                     |   string    | `"cloudtrail-all"` |    no    |
-| iam\_path           | Path for the iam role                                                                                                       |   string    |        `/`         |    no    |
-| kms\_key\_id        | KMS key ARN to use for encrypting CloudTrail logs                                                                           |   string    |        n/a         |   yes    |
-| log\_group\_name    | Name for CloudTrail log group                                                                                               |   string    | `"cloudtrail2cwl"` |    no    |
-| region              | Region that CloudWatch logging and the S3 bucket will live in                                                               |   string    |        n/a         |   yes    |
-| retention\_in\_days | How long should CloudTrail logs be retained in CloudWatch \(does not affect S3 storage\). Set to -1 for indefinite storage. |   number    |       `"7"`        |    no    |
-| tags                | Mapping of any extra tags you want added to resources                                                                       | map(string) |        `{}`          |    no    |
-
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| cloudtrail\_bucket | Name of bucket for CloudTrail logs | `string` | n/a | yes |
+| cloudtrail\_name | Name for the CloudTrail | `string` | `"cloudtrail-all"` | no |
+| iam\_path | Path under which to put the IAM role. Should begin and end with a '/'. | `string` | `"/"` | no |
+| kms\_key\_id | KMS key ARN to use for encrypting CloudTrail logs | `string` | n/a | yes |
+| lambda\_functions | Lambda functions to log. Specify `["arn:aws:lambda"]` for all, or `[ ]` for none. | `list` | `[]` | no |
+| log\_group\_name | Name for CloudTrail log group | `string` | `"cloudtrail2cwl"` | no |
+| region | Region that CloudWatch logging and the S3 bucket will live in | `string` | n/a | yes |
+| retention\_in\_days | How long should CloudTrail logs be retained in CloudWatch (does not affect S3 storage). Set to -1 for indefinite storage. | `number` | `7` | no |
+| s3\_object\_level\_buckets | ARNs of buckets for which to enable object level logging. Specify `["arn:aws:s3:::"]` for all, or `[ ]` for none. If listing ARNs, make sure to end each one with a `/`. | `list` | `[]` | no |
+| tags | Mapping of any extra tags you want added to resources | `map(string)` | `{}` | no |
 
 ## Outputs
 
