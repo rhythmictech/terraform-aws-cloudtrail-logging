@@ -21,7 +21,7 @@ variable "kms_key_id" {
 }
 
 variable "lambda_functions" {
-  default     = [ ]
+  default     = []
   description = "Lambda functions to log. Specify `[\"arn:aws:lambda\"]` for all, or `[ ]` for none."
   type        = list
 }
@@ -50,7 +50,7 @@ variable "tags" {
 }
 
 variable "s3_object_level_buckets" {
-  default     = [ ]
+  default     = []
   description = "ARNs of buckets for which to enable object level logging. Specify `[\"arn:aws:s3:::\"]` for all, or `[ ]` for none. If listing ARNs, make sure to end each one with a `/`."
   type        = list
 }
