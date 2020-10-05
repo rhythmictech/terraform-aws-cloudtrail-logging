@@ -15,7 +15,7 @@ locals {
 
 resource "aws_cloudtrail" "trail" {
   cloud_watch_logs_role_arn  = aws_iam_role.cloudtrail_cloudwatch_events_role.arn
-  cloud_watch_logs_group_arn = aws_cloudwatch_log_group.cwl_loggroup.arn
+  cloud_watch_logs_group_arn = "${aws_cloudwatch_log_group.cwl_loggroup.arn}:*"
   enable_log_file_validation = "true"
   enable_logging             = "true"
   is_multi_region_trail      = "true"
